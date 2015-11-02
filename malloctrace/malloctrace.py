@@ -1,5 +1,7 @@
 __author__ = 'HarishRohini'
 
+import optparse
+
 class Malloctrace(object):
     """Returns a list containing the tuples of address ranges"""
     def __init__(self, filename):
@@ -15,5 +17,10 @@ class Malloctrace(object):
 
 
 if __name__ == '__main__':
-    malloctrace = Malloctrace("malloctrace.out")
-    print malloctrace.filename
+    parser = optparse.OptionParser()
+    parser.add_option('-f','--file',help="malloctrace.out file", dest='malloctrace_file', action='store_true')
+    (opts, args) = parser.parse_args()
+
+    if opts.malloctrace_file is None:
+        parser.print_help()
+        exit(-1)

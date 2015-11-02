@@ -14,5 +14,10 @@ class MemoryTrace(object):
 
 
 if __name__ == '__main__':
-    memorytrace = MemoryTrace("memorytrace.out")
-    print memorytrace.filename
+    parser = optparse.OptionParser()
+    parser.add_option('-f','--file',help="malloctrace.out file", dest='malloctrace_file', action='store_true')
+    (opts, args) = parser.parse_args()
+
+    if opts.malloctrace_file is None:
+        parser.print_help()
+        exit(-1)
