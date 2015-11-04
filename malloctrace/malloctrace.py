@@ -10,13 +10,15 @@ class Malloctrace(object):
         self.address_range_list = []
 
     def process_file(self):
-        number_of_bytes, start_address = None, None
+        number_of_bytes, start_address, end_address = None, None, None
         with open(self.filename, 'r') as f:
             temp = f.readline()
             for line in f:
                 if line.find('returns') != -1:
                     number_of_bytes, start_address = temp[7:-2], line[10:-1]
                     print (number_of_bytes,start_address)
+                    end_address = hex(int(start_address,16) + int(number_of_bytes,16))
+                    self.address_range_list.append((start_address,end_address))
                 else:
                     temp = line
 
