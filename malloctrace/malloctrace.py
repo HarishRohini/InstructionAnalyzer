@@ -42,4 +42,4 @@ if __name__ == '__main__':
 
     malloctrace = Malloctrace(opts.malloctrace_file)
     malloctrace.process_file()
-    print malloctrace.address_dict
+    #print malloctrace.address_dict
