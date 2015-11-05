@@ -49,4 +49,4 @@ if __name__ == '__main__':
     malloctrace = Malloctrace(opts.malloctrace_file)
     malloctrace.process_file()
     #print malloctrace.address_dict
-    print hex(malloctrace.min_heap_address), hex(malloctrace.max_heap_address + malloctrace.max_heap_address_allocated_bytes)
+    #print hex(malloctrace.min_heap_address), hex(malloctrace.max_heap_address + malloctrace.max_heap_address_allocated_bytes)
