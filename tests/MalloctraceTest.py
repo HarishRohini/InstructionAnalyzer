@@ -29,6 +29,11 @@ class MallocTest(unittest.TestCase):
         address_dict_test = {'0x7f7dbc274010': '0x600000', '0x1f30010': '0x1400', '0x7f7dbac71010': '0x600000', '0x7f7dbbc73010': '0x600000'}
         self.assertDictEqual(address_dict_test,self.malloctest.address_dict,"Wrong address dictionary!")
 
+    def test_min_max_head_addresses(self):
+        min_max_heap_range = ('0x1f30010', '0x7f7dbce74010')
+        self.assertTupleEqual(min_max_heap_range, (hex(self.malloctest.min_heap_address), hex(self.malloctest.max_heap_address + self.malloctest.max_heap_address_allocated_bytes)), "Wrong Min Max Heap range !!")
+
+
 
 if __name__ == '__main__':
     unittest.main()

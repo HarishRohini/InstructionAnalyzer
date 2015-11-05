@@ -9,6 +9,7 @@ class Malloctrace(object):
         self.filename = filename
         self.address_range_list = []
         self.address_dict = {}
+        self.min_heap_address, self.max_heap_address, self.max_heap_address_allocated_bytes = 0, 0, 0
 
     def process_file(self):
         number_of_bytes, start_address, end_address = None, None, None
@@ -19,6 +20,11 @@ class Malloctrace(object):
                     number_of_bytes, start_address = temp[7:-2], line[10:-1]
                     print (number_of_bytes,start_address)
                     end_address = hex(int(start_address,16) + int(number_of_bytes,16))
+                    if self.min_heap_address >= int(start_address,16) or self.min_heap_address == 0:
+                        self.min_heap_address = int(start_address,16)
+                    if self.max_heap_address <= int(end_address,16) or self.max_heap_address == 0:
+                        self.max_heap_address = int(end_address,16)
+                        self.max_heap_address_allocated_bytes = int(number_of_bytes,16)
                     self.address_range_list.append((start_address,end_address))
                     self.address_dict[start_address] = number_of_bytes
                 elif line.find('free') != -1:
@@ -43,3 +49,4 @@ if __name__ == '__main__':
     malloctrace = Malloctrace(opts.malloctrace_file)
     malloctrace.process_file()
     #print malloctrace.address_dict
+    print hex(malloctrace.min_heap_address), hex(malloctrace.max_heap_address + malloctrace.max_heap_address_allocated_bytes)
