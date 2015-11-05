@@ -23,7 +23,11 @@ class MallocTest(unittest.TestCase):
         ('0x1f31420', '0x1f32810'), ('0x1f32820', '0x1f422b0'), ('0x1f422c0', '0x21edc40'), ('0x1f31420', '0x1f32810'),
         ('0x1f32820', '0x1f401f8'), ('0x7f7db9338010', '0x7f7db96a6e90'), ('0x7f7db8fc9010', '0x7f7db9337f18'),
         ('0x1f40200', '0x1f80204'), ('0x1f31420', '0x1f32810'), ('0x1f32820', '0x1f422b0'), ('0x1f422c0', '0x22b1140')]
-        self.assertListEqual(address_range_test_list,self.malloctest.address_range_list)
+        self.assertListEqual(address_range_test_list,self.malloctest.address_range_list,"Wrong address range list!")
+
+    def test_malloc_dict(self):
+        address_dict_test = {'0x7f7dbc274010': '0x600000', '0x1f30010': '0x1400', '0x7f7dbac71010': '0x600000', '0x7f7dbbc73010': '0x600000'}
+        self.assertDictEqual(address_dict_test,self.malloctest.address_dict,"Wrong address dictionary!")
 
 
 if __name__ == '__main__':

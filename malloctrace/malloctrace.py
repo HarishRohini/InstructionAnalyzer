@@ -8,6 +8,7 @@ class Malloctrace(object):
         super(Malloctrace, self).__init__()
         self.filename = filename
         self.address_range_list = []
+        self.address_dict = {}
 
     def process_file(self):
         number_of_bytes, start_address, end_address = None, None, None
@@ -19,6 +20,10 @@ class Malloctrace(object):
                     print (number_of_bytes,start_address)
                     end_address = hex(int(start_address,16) + int(number_of_bytes,16))
                     self.address_range_list.append((start_address,end_address))
+                    self.address_dict[start_address] = number_of_bytes
+                elif line.find('free') != -1:
+                    self.address_dict.pop(line[5:-2],None)
+                    temp = line
                 else:
                     temp = line
 
@@ -37,3 +42,4 @@ if __name__ == '__main__':
 
     malloctrace = Malloctrace(opts.malloctrace_file)
     malloctrace.process_file()
+    print malloctrace.address_dict
