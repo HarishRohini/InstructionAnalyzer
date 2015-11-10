@@ -36,7 +36,7 @@ class MemoryTrace(object):
         pass
 
     def process_pickle_file(self):
-        f = open(self.pickle_file,'r')
+        f = open(self.pickle_file,'rb')
         pickle_list = pickle.load(f)
         self.address_range = pickle_list[0]
         self.address_dict = pickle_list[1]
