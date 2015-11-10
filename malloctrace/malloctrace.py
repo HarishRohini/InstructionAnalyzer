@@ -39,7 +39,7 @@ class Malloctrace(object):
         f.close()
 
     def write_to_file(self):
-        f = open('test.in','w')
+        f = open('test.in','wb')
         temp_list = [] #first element tuple, second dictionary
         temp_list.append((hex(self.min_heap_address), hex(self.max_heap_address + self.max_heap_address_allocated_bytes)))
         temp_list.append(self.address_dict)
