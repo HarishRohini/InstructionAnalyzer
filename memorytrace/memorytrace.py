@@ -28,8 +28,8 @@ class MemoryTrace(object):
                     else:
                         pass
         f.close()
-        print "Read reference : ", self.heap_read_reference
-        print "Write reference : ", self.heap_write_reference
+        #print "Read reference : ", self.heap_read_reference
+        #print "Write reference : ", self.heap_write_reference
 
 
     def write_to_file():
