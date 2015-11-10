@@ -3,6 +3,7 @@ import os, sys
 parentddir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir))
 sys.path.append(parentddir)
 from malloctrace.malloctrace import Malloctrace
+from memorytrace.memorytrace import MemoryTrace
 
 class MallocTest(unittest.TestCase):
     """Unit test cases for Malloctrace"""
@@ -10,8 +11,13 @@ class MallocTest(unittest.TestCase):
 
     def setUp(self):
         self.filename = "tests/malloctrace.out"
+        self.memorytrace_filename = "tests/pinatrace.out"
         self.malloctest = Malloctrace(self.filename)
         self.malloctest.process_file()
+        self.malloctest.write_to_file()
+        self.memorytest = MemoryTrace(self.memorytrace_filename, "test.in")
+        self.memorytest.process_pickle_file()
+        self.memorytest.process_file()
 
     def test_malloc(self):
         address_range_test_list = [('0x7f7dbc274010', '0x7f7dbc874010'), ('0x7f7dbbc73010', '0x7f7dbc273010'),
@@ -32,6 +38,10 @@ class MallocTest(unittest.TestCase):
     def test_min_max_head_addresses(self):
         min_max_heap_range = ('0x1f30010', '0x7f7dbce74010')
         self.assertTupleEqual(min_max_heap_range, (hex(self.malloctest.min_heap_address), hex(self.malloctest.max_heap_address + self.malloctest.max_heap_address_allocated_bytes)), "Wrong Min Max Heap range !!")
+
+    def test_memory_reference(self):
+        read_write_reference = (14, 6)
+        self.assertTupleEqual(read_write_reference,(self.memorytest.heap_read_reference, self.memorytest.heap_write_reference),"Wrong Read Write Reference")
 
 
 
