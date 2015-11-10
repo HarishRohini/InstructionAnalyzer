@@ -49,7 +49,6 @@ if __name__ == '__main__':
     parser.add_option('-f','--file',help="pinatrace.out file", dest='pinatrace_file', action='store', type='string')
     parser.add_option('-p','--pickle_file', help="Pickle file", dest = 'pickle_file', action='store', type='string')
     (opts, args) = parser.parse_args()
-    print opts.pinatrace_file, opts.pickle_file
 
     if opts.pinatrace_file is None or opts.pickle_file is None:
         parser.print_help()
