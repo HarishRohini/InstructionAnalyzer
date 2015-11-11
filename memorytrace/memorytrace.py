@@ -17,6 +17,8 @@ class MemoryTrace(object):
         with open(self.filename, 'r') as f:
             for line in f:
                 split_mem_trace = line.split()
+                if len(split_mem_trace) <= 2:
+                    continue
                 if split_mem_trace[1] == 'R':
                     if int(self.address_range[0],16) <= int(split_mem_trace[2],16) <= int(self.address_range[1],16):
                         self.heap_read_reference += 1

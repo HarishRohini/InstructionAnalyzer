@@ -11,6 +11,7 @@ class Malloctrace(object):
         self.address_range_list = []
         self.address_dict = {}
         self.min_heap_address, self.max_heap_address, self.max_heap_address_allocated_bytes = 0, 0, 0
+        self.number_of_bytes_allocated = 0
 
     def process_file(self):
         number_of_bytes, start_address, end_address = None, None, None
@@ -31,6 +32,7 @@ class Malloctrace(object):
                         self.max_heap_address_allocated_bytes = number_of_bytes_hex_to_int
                     self.address_range_list.append((start_address,end_address))
                     self.address_dict[start_address] = number_of_bytes
+                    self.number_of_bytes_allocated += number_of_bytes_hex_to_int
                 elif line.find('free') != -1:
                     self.address_dict.pop(line[5:-2],None)
                     temp = line
@@ -43,6 +45,7 @@ class Malloctrace(object):
         temp_list = [] #first element tuple, second dictionary
         temp_list.append((hex(self.min_heap_address), hex(self.max_heap_address + self.max_heap_address_allocated_bytes)))
         temp_list.append(self.address_dict)
+        temp_list.append(self.number_of_bytes_allocated)
         #print temp_list
         pickle.dump(temp_list,f)
         f.close()
