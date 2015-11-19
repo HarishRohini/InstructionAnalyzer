@@ -43,6 +43,12 @@ class MallocTest(unittest.TestCase):
         read_write_reference = (14, 6)
         self.assertTupleEqual(read_write_reference,(self.memorytest.heap_read_reference, self.memorytest.heap_write_reference),"Wrong Read Write Reference")
 
+    def test_heap_dict_reference(self):
+        heap_ref_read_dict = {32751744: 0, 32712816: 0, 32713380: 4, 32757192: 0, 140177978083824: 0, 32712852: 1, 32713376: 2}
+        self.assertDictEqual(heap_ref_read_dict, self.memorytest.heap_ref_read_dict, "Wrong Read Address Reference Dictionary")
+        heap_ref_write_dict = {32713376: 1, 32713380: 1, 140177976346642: 0, 32712852: 0}
+        self.assertDictEqual(heap_ref_write_dict, self.memorytest.heap_ref_write_dict, "Wrong Write Address Reference Dictionary")
+
 
 
 if __name__ == '__main__':

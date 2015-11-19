@@ -11,6 +11,8 @@ class MemoryTrace(object):
         self.pickle_file = pickle_file
         self.heap_read_reference = 0
         self.heap_write_reference = 0
+        self.heap_ref_read_dict = {}
+        self.heap_ref_write_dict = {}
 
 
     def process_file(self):
@@ -21,11 +23,19 @@ class MemoryTrace(object):
                     continue
                 if split_mem_trace[1] == 'R':
                     if int(self.address_range[0],16) <= int(split_mem_trace[2],16) <= int(self.address_range[1],16):
+                        if int(split_mem_trace[2],16) in self.heap_ref_read_dict:
+                            self.heap_ref_read_dict[int(split_mem_trace[2],16)] += 1
+                        else:
+                            self.heap_ref_read_dict[int(split_mem_trace[2],16)] = 0
                         self.heap_read_reference += 1
                     else:
                         pass
                 else:
                     if int(self.address_range[0],16) <= int(split_mem_trace[2],16) <= int(self.address_range[1],16):
+                        if int(split_mem_trace[2],16) in self.heap_ref_write_dict:
+                            self.heap_ref_write_dict[int(split_mem_trace[2],16)] += 1
+                        else:
+                            self.heap_ref_write_dict[int(split_mem_trace[2],16)] = 0
                         self.heap_write_reference += 1
                     else:
                         pass
@@ -34,8 +44,23 @@ class MemoryTrace(object):
         #print "Write reference : ", self.heap_write_reference
 
 
-    def write_to_file():
-        pass
+    def write_to_file(self):
+        f = open('heap_trace_read.in','wb')
+        temp_list = [] #first element tuple, second dictionary
+        temp_list.append((self.heap_read_reference, self.heap_write_reference))
+        temp_list.append(self.heap_ref_read_dict)
+        #print temp_list
+        pickle.dump(temp_list,f)
+        f.close()
+
+        f = open('heap_trace_write.in','wb')
+        temp_list = [] #first element tuple, second dictionary
+        temp_list.append((self.heap_read_reference, self.heap_write_reference))
+        temp_list.append(self.heap_ref_write_dict)
+        #print temp_list
+        pickle.dump(temp_list,f)
+        f.close()
+
 
     def process_pickle_file(self):
         f = open(self.pickle_file,'rb')
@@ -59,3 +84,5 @@ if __name__ == '__main__':
     memoryrtrace = MemoryTrace(opts.pinatrace_file, opts.pickle_file)
     memoryrtrace.process_pickle_file()
     memoryrtrace.process_file()
+    memoryrtrace.write_to_file()
+    #print memoryrtrace.heap_ref_dict
