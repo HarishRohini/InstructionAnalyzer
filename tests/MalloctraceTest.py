@@ -4,6 +4,7 @@ parentddir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.par
 sys.path.append(parentddir)
 from malloctrace.malloctrace import Malloctrace
 from memorytrace.memorytrace import MemoryTrace
+from memorytrace.assemblyTrace import AssemblyTrace
 
 class MallocTest(unittest.TestCase):
     """Unit test cases for Malloctrace"""
@@ -12,10 +13,14 @@ class MallocTest(unittest.TestCase):
     def setUp(self):
         self.filename = "tests/malloctrace.out"
         self.memorytrace_filename = "tests/pinatrace.out"
+        self.assemblytrace_file = "tests/assembly_trace.out"
         self.malloctest = Malloctrace(self.filename)
         self.malloctest.process_file()
         self.malloctest.write_to_file()
-        self.memorytest = MemoryTrace(self.memorytrace_filename, "test.in")
+        self.assemblytrace = AssemblyTrace(self.assemblytrace_file)
+        self.assemblytrace.process_file()
+        self.assemblytrace.write_to_file()
+        self.memorytest = MemoryTrace(self.memorytrace_filename, "test.in", "memreference_dict.in")
         self.memorytest.process_pickle_file()
         self.memorytest.process_file()
 
@@ -44,10 +49,16 @@ class MallocTest(unittest.TestCase):
         self.assertTupleEqual(read_write_reference,(self.memorytest.heap_read_reference, self.memorytest.heap_write_reference),"Wrong Read Write Reference")
 
     def test_heap_dict_reference(self):
-        heap_ref_read_dict = {32751744: 0, 32712816: 0, 32713380: 4, 32757192: 0, 140177978083824: 0, 32712852: 1, 32713376: 2}
+        heap_ref_read_dict = {32751744: 1, 32712816: 8, 32713380: 20, 32757192: 4, 140177978083824: 2, 32712852: 8, 32713376: 12}
         self.assertDictEqual(heap_ref_read_dict, self.memorytest.heap_ref_read_dict, "Wrong Read Address Reference Dictionary")
-        heap_ref_write_dict = {32713376: 1, 32713380: 1, 140177976346642: 0, 32712852: 0}
+        heap_ref_write_dict = {32713376: 8, 32713380: 8, 140177976346642: 1, 32712852: 4}
         self.assertDictEqual(heap_ref_write_dict, self.memorytest.heap_ref_write_dict, "Wrong Write Address Reference Dictionary")
+
+    def test_percentage_reference(self):
+        number_of_bytes_allocated = 45256700
+        self.assertEqual(number_of_bytes_allocated, self.memorytest.number_of_bytes_allocated, "Wrong Num of Bytes allocated")
+        unique_program_counter = 52
+        self.assertEqual(unique_program_counter, len(self.memorytest.program_counter_addresses), "Wrong PC Count")
 
 
 

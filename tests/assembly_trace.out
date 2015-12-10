@@ -1,0 +1,60 @@
+0x40b34d : push rbp : 1
+0x40b351 : mov qword ptr [rbp-0x8], rdi : 1
+0x40b355 : mov dword ptr [rbp-0xc], esi : 1
+0x40b358 : mov dword ptr [rbp-0x10], edx : 1
+0x40b35d : mov rax, qword ptr [rbp-0x8] : 1
+0x40b361 : mov rdx, qword ptr [rax+0x50] : 1
+0x40b365 : mov rax, qword ptr [rbp-0x8] : 1
+0x40b369 : mov eax, dword ptr [rax+0x74] : 1
+0x40b371 : mov rax, qword ptr [rbp-0x8] : 1
+0x40b375 : mov eax, dword ptr [rax+0x280] : 1
+0x40b37e : mov byte ptr [rdx], al : 1
+0x40b380 : mov rax, qword ptr [rbp-0x8] : 1
+0x40b384 : mov eax, dword ptr [rax+0x74] : 1
+0x40b38a : mov rax, qword ptr [rbp-0x8] : 1
+0x40b38e : mov dword ptr [rax+0x74], edx : 1
+0x40b391 : mov rax, qword ptr [rbp-0x8] : 1
+0x40b395 : mov eax, dword ptr [rax+0x280] : 1
+0x40b3a0 : mov rax, qword ptr [rbp-0x8] : 1
+0x40b3a4 : mov dword ptr [rax+0x280], edx : 1
+0x40b3aa : mov rax, qword ptr [rbp-0x8] : 1
+0x40b3ae : mov eax, dword ptr [rax+0x284] : 1
+0x40b3b7 : mov rax, qword ptr [rbp-0x8] : 1
+0x40b3bb : mov dword ptr [rax+0x284], edx : 1
+0x40b3c1 : mov rax, qword ptr [rbp-0x8] : 1
+0x40b3c5 : mov eax, dword ptr [rax+0x284] : 1
+0x40b3d0 : mov rax, qword ptr [rbp-0x8] : 1
+0x40b3d4 : mov edx, dword ptr [rax+0x280] : 1
+0x40b3da : mov rax, qword ptr [rbp-0x8] : 1
+0x40b3de : mov eax, dword ptr [rax+0x284] : 1
+0x40b3ed : sub eax, dword ptr [rbp-0xc] : 1
+0x40b3f0 : mov esi, dword ptr [rbp-0x10] : 1
+0x40b3fb : mov rax, qword ptr [rbp-0x8] : 1
+0x40b3ff : mov dword ptr [rax+0x280], edx : 1
+0x40b405 : mov rax, qword ptr [rbp-0x8] : 1
+0x40b409 : mov edx, dword ptr [rax+0x284] : 1
+0x40b40f : mov eax, dword ptr [rbp-0xc] : 1
+0x40b414 : mov rax, qword ptr [rbp-0x8] : 1
+0x40b418 : mov dword ptr [rax+0x284], edx : 1
+0x40b41e : pop rbp : 1
+0x40b41f : ret  : 1
+0x4103ee : mov eax, dword ptr [rbp-0xd0] : 1
+0x4103fe : mov rax, qword ptr [rbp-0x88] : 1
+0x410408 : movzx eax, word ptr [rax] : 1
+0x41040b : mov word ptr [rbp-0xe2], ax : 1
+0x410412 : movzx eax, word ptr [rbp-0xe2] : 1
+0x410421 : mov rax, qword ptr [rbp-0x78] : 1
+0x410428 : mov eax, dword ptr [rax] : 1
+0x41042c : movzx ecx, word ptr [rbp-0xe2] : 1
+0x410433 : mov rax, qword ptr [rbp-0x80] : 1
+0x41043a : movzx eax, byte ptr [rax] : 1
+0x410440 : mov rax, qword ptr [rbp-0xf8] : 1
+0x41044c : call 0x40b34d : 1
+0x410451 : mov eax, dword ptr [rbp-0xd0] : 1
+0x410461 : mov rax, qword ptr [rbp-0x88] : 1
+0x41046b : movzx eax, word ptr [rax] : 1
+0x41046e : mov word ptr [rbp-0xe2], ax : 1
+0x410475 : movzx eax, word ptr [rbp-0xe2] : 1
+0x410484 : mov rax, qword ptr [rbp-0x78] : 1
+0x41048b : mov eax, dword ptr [rax] : 1
+#eof
