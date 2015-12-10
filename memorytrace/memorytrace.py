@@ -109,4 +109,4 @@ if __name__ == '__main__':
     memoryrtrace.write_to_file()
     #print memoryrtrace.heap_ref_read_dict
     #print memoryrtrace.heap_ref_write_dict
-    print "Unique program counter : ", len(memoryrtrace.program_counter_addresses)
+    print ("Unique program counter : ", len(memoryrtrace.program_counter_addresses))
