@@ -35,6 +35,8 @@ class AssemblyTrace(object):
                         self.memory_access[split_assembly_trace[0]] = 8
                     elif 'xmmword' in split_inst:
                         self.memory_access[split_assembly_trace[0]] = 16
+                    elif 'zmmword' in split_inst:
+                        self.memory_access[split_assembly_trace[0]] = 32
                     elif 'pop' in split_inst or 'push' in split_inst or 'call' in split_inst or 'ret' in split_inst or 'leave' in split_inst:
                         #ignore stack operations
                         pass

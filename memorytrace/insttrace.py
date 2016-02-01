@@ -4,10 +4,12 @@ import optparse
 import pickle
 import os
 import address_range
+from bitarray import bitarray
+import operator
 
 class InstructionTrace(object):
     """docstring for InstructionTrace"""
-    def __init__(self, filename, memreference_file):
+    def __init__(self, filename, memreference_file, benchmark_name):
         super(InstructionTrace, self).__init__()
         self.filename = filename
         self.memreference_file = memreference_file
@@ -21,6 +23,9 @@ class InstructionTrace(object):
         self.number_of_bytes_allocated = 0
         self.heap_read_reference, self.heap_write_reference = 0, 0
         self.count = 0
+        self.malloc_block_usage = {}
+        self.memblock_reference_list = []
+        self.benchmark_name = benchmark_name
 
     def update_min_max_heap_address(self, min_address, max_address):
         if self.min_heap_address >= min_address or self.min_heap_address == 0:
@@ -53,6 +58,25 @@ class InstructionTrace(object):
                 bytes_referenced = self.memreference_dict[pc_address]
                 result = address_range.binarySearchRange(self.address_range_list, mem_address)
                 malloc_block = self.get_malloc_block(result, mem_address)
+                if malloc_block is not None:
+                    block_start_address = int(malloc_block[0], 16)
+                    block_end_address = int(malloc_block[1], 16)
+                    if (block_start_address, block_end_address) in self.malloc_block_usage:
+                        access = mem_address - block_start_address
+                        self.malloc_block_usage[(block_start_address, block_end_address)][access:access+bytes_referenced] = 1
+                    else:
+                        #print "Num of bytes : ", block_end_address - block_start_address
+                        #print "reference : ", block_start_address, mem_address - block_start_address, bytes_referenced
+                        self.malloc_block_usage[(block_start_address, block_end_address)] = bitarray(block_end_address - block_start_address)
+                        self.malloc_block_usage[(block_start_address, block_end_address)].setall(0)
+                        #print self.malloc_block_usage[(block_start_address, block_end_address)]
+                        access = mem_address - block_start_address
+                        self.malloc_block_usage[(block_start_address, block_end_address)][access:access+bytes_referenced] = 1
+                        #print "Access : ", mem_address - block_start_address
+                        #print "After reference : ", self.malloc_block_usage[(block_start_address, block_end_address)]
+                else:
+                    block_start_address = None
+                    block_end_address = None
                 if malloc_block in self.malloc_block_dict:
                     self.malloc_block_dict[malloc_block] += 1 #bytes_referenced
                 else:
@@ -72,6 +96,20 @@ class InstructionTrace(object):
                 bytes_referenced = self.memreference_dict[pc_address]
                 result = address_range.binarySearchRange(self.address_range_list, mem_address)
                 malloc_block = self.get_malloc_block(result, mem_address)
+                if malloc_block is not None:
+                    block_start_address = int(malloc_block[0], 16)
+                    block_end_address = int(malloc_block[1], 16)
+                    if (block_start_address, block_end_address) in self.malloc_block_usage:
+                        access = mem_address - block_start_address
+                        self.malloc_block_usage[(block_start_address, block_end_address)][access:access+bytes_referenced] = 1
+                    else:
+                        self.malloc_block_usage[(block_start_address, block_end_address)] = bitarray(block_end_address - block_start_address)
+                        self.malloc_block_usage[(block_start_address, block_end_address)].setall(0)
+                        access = mem_address - block_start_address
+                        self.malloc_block_usage[(block_start_address, block_end_address)][access:access+bytes_referenced] = 1
+                else:
+                    block_start_address = None
+                    block_end_address = None
                 if malloc_block in self.malloc_block_dict:
                     self.malloc_block_dict[malloc_block] += 1 #bytes_referenced
                 else:
@@ -133,9 +171,19 @@ class InstructionTrace(object):
                     #print "free_ptr", free_ptr
                     #free Malloc Block dictionary
                     end_address_hex = hex(self.address_dict[free_ptr])
+                    end_address_int = self.address_dict[free_ptr]
+                    val1, val2 = None, None
                     if (free_ptr_hex, end_address_hex) in self.malloc_block_dict:
                         print "Malloc Block : ", (free_ptr_hex, end_address_hex), self.malloc_block_dict[(free_ptr_hex, end_address_hex)]
+                        val1 = self.malloc_block_dict[(free_ptr_hex, end_address_hex)]
+                        #self.memblock_reference_list.append(self.malloc_block_dict[(free_ptr_hex, end_address_hex)])
                         self.malloc_block_dict.pop((free_ptr_hex, end_address_hex), None)
+                    if (free_ptr, end_address_int) in self.malloc_block_usage:
+                        print "Malloc Block Usage: ", (free_ptr_hex, end_address_hex), self.malloc_block_usage[(free_ptr, end_address_int)]
+                        val2 = self.malloc_block_usage[(free_ptr, end_address_int)]
+                        self.malloc_block_usage.pop((free_ptr, end_address_int), None)
+                    if val1 is not None and val2 is not None:
+                        self.memblock_reference_list.append((val2, val1))
                     self.address_dict.pop(free_ptr, None)
                     self.address_range_list.remove(free_ptr)
                     self.address_range_list.sort()
@@ -155,21 +203,38 @@ class InstructionTrace(object):
         self.memreference_dict = pickle_list[0]
         f.close()
 
+    def get_block_references(self):
+        for key, val in self.malloc_block_dict.iteritems():
+            if key is not None:
+                t = (int(key[0], 16), int(key[1], 16))
+            if key is not None and t in self.malloc_block_usage:
+                self.memblock_reference_list.append((self.malloc_block_usage[t], val))
+        self.memblock_reference_list.sort(key=operator.itemgetter(1), reverse = True)
+
+    def write_to_file(self):
+        f = open(self.benchmark_name+".in",'wb')
+        pickle.dump(self.memblock_reference_list,f)
+        f.close()
 
 if __name__ == '__main__':
     parser = optparse.OptionParser()
     parser.add_option('-f','--file',help="insttrace.out file", dest='inst_file', action='store', type='string')
     parser.add_option('-m','--memreference_pickle_file', help="memreference file", dest='memreference_file', action='store', type='string')
+    parser.add_option('-b','--benchmark_name', help="benchmark name", dest='benchmark_name', action='store', type='string')
     (opts, args) = parser.parse_args()
 
-    if opts.inst_file is None or opts.memreference_file is None:
+    if opts.inst_file is None or opts.memreference_file is None or opts.benchmark_name is None:
         parser.print_help()
         exit(-1)
 
-    insttrace = InstructionTrace(opts.inst_file, opts.memreference_file)
+    insttrace = InstructionTrace(opts.inst_file, opts.memreference_file, opts.benchmark_name)
     insttrace.process_pickle_file()
     insttrace.process_file()
+    insttrace.get_block_references()
+    insttrace.write_to_file()
     print len(insttrace.address_dict)
     print len(insttrace.address_range_list)
     print insttrace.min_heap_address, insttrace.max_heap_address
-    print self.malloc_block_dict
+    #print insttrace.malloc_block_dict
+    #print insttrace.malloc_block_usage
+    #print insttrace.memblock_reference_list
